@@ -15,12 +15,12 @@ spec:
         app: book-service
     spec:
       containers:
-      - name: book-service
-        image: depchai/book-service:latest
+      - name: book-service-simple
+        image: depchai/book-service:simple
         ports:
         - containerPort: 8080
         env:
-        - name: MONGO_URI
+        - name: MONGODB_URI
           value: mongodb://mongo-books:27017/booksdb
 ---
 apiVersion: v1
@@ -97,7 +97,7 @@ spec:
         ports:
         - containerPort: 8081
         env:
-        - name: MONGO_URI
+        - name: MONGODB_URI
           value: mongodb://mongo-loans:27017/loansdb
         - name: BOOK_SERVICE_URL
           value: http://book-service:8080
@@ -215,6 +215,22 @@ spec:
   http:
   - match:
     - uri:
+        exact: /books.js
+    - uri:
+        exact: /loans.js
+    - uri:
+        exact: /style.css
+    - uri:
+        exact: /
+    - uri:
+        exact: /index.html
+    route:
+    - destination:
+        host: frontend
+        port:
+          number: 80
+  - match:
+    - uri:
         prefix: /books
     route:
     - destination:
@@ -229,15 +245,3 @@ spec:
         host: loan-service
         port:
           number: 8081
-  - match:
-    - uri:
-        exact: /
-    - uri:
-        prefix: /index.html
-    - uri:
-        regex: .*\.(css|js|html)$
-    route:
-    - destination:
-        host: frontend
-        port:
-          number: 80
