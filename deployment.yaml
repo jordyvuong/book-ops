@@ -1,0 +1,243 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: book-service
+  labels:
+    app: book-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: book-service
+  template:
+    metadata:
+      labels:
+        app: book-service
+    spec:
+      containers:
+      - name: book-service
+        image: ${DOCKER_USERNAME}/book-service:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: MONGO_URI
+          value: mongodb://mongo-books:27017/booksdb
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: book-service
+spec:
+  selector:
+    app: book-service
+  ports:
+  - port: 8080
+    targetPort: 8080
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo-books
+  labels:
+    app: mongo-books
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo-books
+  template:
+    metadata:
+      labels:
+        app: mongo-books
+    spec:
+      containers:
+      - name: mongo-books
+        image: mongo:4.4
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - name: mongo-books-data
+          mountPath: /data/db
+      volumes:
+      - name: mongo-books-data
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-books
+spec:
+  selector:
+    app: mongo-books
+  ports:
+  - port: 27017
+    targetPort: 27017
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loan-service
+  labels:
+    app: loan-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: loan-service
+  template:
+    metadata:
+      labels:
+        app: loan-service
+    spec:
+      containers:
+      - name: loan-service
+        image: ${DOCKER_USERNAME}/loan-service:latest
+        ports:
+        - containerPort: 8081
+        env:
+        - name: MONGO_URI
+          value: mongodb://mongo-loans:27017/loansdb
+        - name: BOOK_SERVICE_URL
+          value: http://book-service:8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: loan-service
+spec:
+  selector:
+    app: loan-service
+  ports:
+  - port: 8081
+    targetPort: 8081
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo-loans
+  labels:
+    app: mongo-loans
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo-loans
+  template:
+    metadata:
+      labels:
+        app: mongo-loans
+    spec:
+      containers:
+      - name: mongo-loans
+        image: mongo:4.4
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - name: mongo-loans-data
+          mountPath: /data/db
+      volumes:
+      - name: mongo-loans-data
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-loans
+spec:
+  selector:
+    app: mongo-loans
+  ports:
+  - port: 27017
+    targetPort: 27017
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  labels:
+    app: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: ${DOCKER_USERNAME}/frontend:latest
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+spec:
+  selector:
+    app: frontend
+  ports:
+  - port: 80
+    targetPort: 80
+  type: LoadBalancer
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: library-gateway
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: library-virtualservice
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - library-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /books
+    route:
+    - destination:
+        host: book-service
+        port:
+          number: 8080
+  - match:
+    - uri:
+        prefix: /loans
+    route:
+    - destination:
+        host: loan-service
+        port:
+          number: 8081
+  - match:
+    - uri:
+        exact: /
+    - uri:
+        prefix: /index.html
+    - uri:
+        regex: .*\.(css|js|html)$
+    route:
+    - destination:
+        host: frontend
+        port:
+          number: 80
