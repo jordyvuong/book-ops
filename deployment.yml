@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: book-service
-        image: ${DOCKER_USERNAME}/book-service:latest
+        image: depchai/book-service:latest
         ports:
         - containerPort: 8080
         env:
@@ -93,7 +93,7 @@ spec:
     spec:
       containers:
       - name: loan-service
-        image: ${DOCKER_USERNAME}/loan-service:latest
+        image: depchai/loan-service:latest
         ports:
         - containerPort: 8081
         env:
@@ -172,7 +172,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: ${DOCKER_USERNAME}/frontend:latest
+        image: depchai/frontend:latest
         ports:
         - containerPort: 80
 ---

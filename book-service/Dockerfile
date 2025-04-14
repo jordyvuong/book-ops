@@ -10,4 +10,4 @@ COPY . .
 
 EXPOSE 8080
 
-CMD ["node", "server.js"]
+CMD ["sh", "-c", "ls -la && ls -la routes && node server.js"]
