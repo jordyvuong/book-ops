@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Système de Bibliothèque</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Système de Gestion de Bibliothèque</h1>
+    <nav>
+      <button id="showBooks" class="active">Livres</button>
+      <button id="showLoans">Emprunts</button>
+    </nav>
+  </header>
+  
+  <main>
+    <!-- Section des livres -->
+    <section id="booksSection" class="active">
+      <h2>Gestion des Livres</h2>
+      
+      <div class="form-container">
+        <h3>Ajouter un nouveau livre</h3>
+        <form id="addBookForm">
+          <div class="form-group">
+            <label for="title">Titre:</label>
+            <input type="text" id="title" name="title" required>
+          </div>
+          <div class="form-group">
+            <label for="author">Auteur:</label>
+            <input type="text" id="author" name="author" required>
+          </div>
+          <button type="submit">Ajouter</button>
+        </form>
+      </div>
+      
+      <div class="list-container">
+        <h3>Liste des livres</h3>
+        <div id="booksList" class="items-list"></div>
+      </div>
+    </section>
+    
+    <!-- Section des emprunts -->
+    <section id="loansSection">
+      <h2>Gestion des Emprunts</h2>
+      
+      <div class="form-container">
+        <h3>Emprunter un livre</h3>
+        <form id="addLoanForm">
+          <div class="form-group">
+            <label for="bookId">Livre:</label>
+            <select id="bookId" name="bookId" required></select>
+          </div>
+          <div class="form-group">
+            <label for="borrowerName">Nom de l'emprunteur:</label>
+            <input type="text" id="borrowerName" name="borrowerName" required>
+          </div>
+          <button type="submit">Emprunter</button>
+        </form>
+      </div>
+      
+      <div class="list-container">
+        <h3>Emprunts en cours</h3>
+        <div id="loansList" class="items-list"></div>
+      </div>
+    </section>
+  </main>
+  
+  <script src="books.js"></script>
+  <script src="loans.js"></script>
+  <script>
+    // Navigation entre les sections
+    document.getElementById('showBooks').addEventListener('click', function() {
+      document.getElementById('booksSection').classList.add('active');
+      document.getElementById('loansSection').classList.remove('active');
+      document.getElementById('showBooks').classList.add('active');
+      document.getElementById('showLoans').classList.remove('active');
+    });
+    
+    document.getElementById('showLoans').addEventListener('click', function() {
+      document.getElementById('loansSection').classList.add('active');
+      document.getElementById('booksSection').classList.remove('active');
+      document.getElementById('showLoans').classList.add('active');
+      document.getElementById('showBooks').classList.remove('active');
+    });
+  </script>
+</body>
+</html>
