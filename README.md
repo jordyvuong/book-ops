@@ -89,7 +89,3 @@ Accédez au dashboard Kubernetes :
 ```bash
 minikube dashboard
 ```
-
-```
-
-```
