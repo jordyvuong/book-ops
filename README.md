@@ -1,6 +1,8 @@
-```# Système de Gestion de Bibliothèque avec Microservices
+# Système de Gestion de Bibliothèque avec Microservices
 
 Ce projet est un système de gestion de bibliothèque implémenté avec une architecture microservices. Il utilise Docker, Kubernetes et Istio pour déployer et gérer les différents services.
+
+On a pu créer un autre projet pour s'entrainer via [text](https://github.com/sSait0o/quote-devops.git)
 
 ## Architecture
 
@@ -34,6 +36,7 @@ Pour déployer l'application:
 L'interface utilisateur vous permet de :
 
 1. **Gestion des livres** :
+
    - Ajouter de nouveaux livres
    - Consulter la liste des livres
    - Supprimer des livres
@@ -54,7 +57,7 @@ library-system/
 ├── deployment.yml # Configuration Kubernetes
 └── README.md # Documentation
 
-````
+```
 
 ## API REST
 
@@ -79,7 +82,7 @@ Pour augmenter le nombre d'instances d'un service :
 
 ```bash
 kubectl scale deployment book-service --replicas=3
-````
+```
 
 ## Surveillance
 
