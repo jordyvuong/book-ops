@@ -2,8 +2,6 @@
 
 Ce projet est un système de gestion de bibliothèque implémenté avec une architecture microservices. Il utilise Docker, Kubernetes et Istio pour déployer et gérer les différents services.
 
-On a pu créer un autre projet pour s'entrainer via [text](https://github.com/sSait0o/quote-devops.git)
-
 ## Architecture
 
 Le système est composé de trois composants principaux :
